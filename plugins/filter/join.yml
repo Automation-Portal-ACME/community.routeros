@@ -2,7 +2,6 @@
 # Copyright (c) Ansible Project
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
-
 DOCUMENTATION:
   name: join
   short_description: Join a list of arguments to a command
@@ -18,14 +17,12 @@ DOCUMENTATION:
       required: true
   author:
     - Felix Fontein (@felixfontein)
-
 EXAMPLES: |
   ---
   - name: Join arguments for a RouterOS CLI command
     ansible.builtin.set_fact:
       arguments: "{{ ['foo=bar', 'comment=foo is bar'] | community.routeros.join }}"
       # Should result in 'foo=bar comment="foo is bar"'
-
 RETURN:
   _value:
     description: The joined and quoted result.

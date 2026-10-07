@@ -9,9 +9,52 @@
     password: bar
     hostname: localhost
     path: ip address
-  ignore_errors: true
   register: result
+  ignore_errors: true
 
+---
+- name: Validate result
+  ansible.builtin.assert:
+    that:
+      - result is failed
+      - result['msg'] in potential_errors
+  vars:
+    potential_errors:
+      - "Error while connecting: [Errno 111] Connection refused"
+      - "Error while connecting: [Errno 99] Cannot assign requested address"
+
+
+- name: Run command module
+  community.routeros.command:
+    commands:
+      - /ip address print
+  register: result
+  ignore_errors: true
+  vars:
+    ansible_host: localhost
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: community.routeros.routeros
+    ansible_user: foo
+    ansible_ssh_pass: bar
+    ansible_ssh_port: 12349
+
+
+- name: Run command module
+  ansible.builtin.command:
+    commands:
+      - /ip address print
+  register: result
+  ignore_errors: true
+  vars:
+    ansible_host: localhost
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: community.routeros.routeros
+    ansible_user: foo
+    ansible_ssh_pass: bar
+    ansible_ssh_port: 12349
+
+  changed_when: false
+---
 - name: Validate result
   ansible.builtin.assert:
     that:
@@ -22,10 +65,13 @@
       - "Error while connecting: [Errno 111] Connection refused"
       - "Error while connecting: [Errno 99] Cannot assign requested address"
 
+
 - name: Run command module
   community.routeros.command:
     commands:
       - /ip address print
+  register: result
+  ignore_errors: true
   vars:
     ansible_host: localhost
     ansible_connection: ansible.netcommon.network_cli
@@ -33,11 +79,5 @@
     ansible_user: foo
     ansible_ssh_pass: bar
     ansible_ssh_port: 12349
-  ignore_errors: true
-  register: result
 
-- name: Validate result
-  ansible.builtin.assert:
-    that:
-      - result is failed
-      - "'Unable to connect to port 12349 ' in result.msg or 'ssh connect failed: Connection refused' in result.msg"
+

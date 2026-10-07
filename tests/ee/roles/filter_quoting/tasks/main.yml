@@ -3,7 +3,7 @@
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-- name: "Test split filter"
+- name: Test split filter
   ansible.builtin.assert:
     that:
       - "'' | community.routeros.split == []"
@@ -11,20 +11,45 @@
       - >
         'foo bar="a b c"' | community.routeros.split == ['foo', 'bar=a b c']
 
-- name: "Test split filter error handling"
+---
+- name: Test split filter error handling
   ansible.builtin.set_fact:
     test: >-
       {{ 'a="' | community.routeros.split }}
-  ignore_errors: true
   register: result
+  ignore_errors: true
 
-- name: "Verify split filter error handling"
+
+
+- name: Verify split filter error handling
   ansible.builtin.assert:
     that:
       - >-
         "Unexpected end of string during escaped parameter" in result.msg
 
-- name: "Test quote_argument filter"
+
+
+- name: Test quote_argument filter
+  ansible.builtin.assert:
+    that:
+      - >-
+        'a="' | community.routeros.quote_argument == 'a=""'
+      - >-
+        'a=b' | community.routeros.quote_argument == 'a=b'
+      - >-
+        'a=b c' | community.routeros.quote_argument == 'a="b\_c"'
+      - >-
+        'a=""' | community.routeros.quote_argument == 'a="\"\""'
+
+
+
+- name: Verify split filter error handling
+  ansible.builtin.assert:
+    that:
+      - >-
+        "Unexpected end of string during escaped parameter" in result.msg
+
+- name: Test quote_argument filter
   ansible.builtin.assert:
     that:
       - >
@@ -36,7 +61,7 @@
       - >
         'a=""' | community.routeros.quote_argument == 'a="\\"\\""'
 
-- name: "Test quote_argument_value filter"
+- name: Test quote_argument_value filter
   ansible.builtin.assert:
     that:
       - >
@@ -46,13 +71,13 @@
       - >
         '"foo bar"' | community.routeros.quote_argument_value == '"\\"foo\\_bar\\""'
 
-- name: "Test join filter"
+- name: Test join filter
   ansible.builtin.assert:
     that:
       - >
         ['a=', 'b=c d'] | community.routeros.join == 'a="" b="c\\_d"'
 
-- name: "Test list_to_dict filter"
+- name: Test list_to_dict filter
   ansible.builtin.assert:
     that:
       - >
