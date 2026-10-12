@@ -2,18 +2,8 @@
 # Copyright (c) Ansible Project
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
-
 - name: Run all EE tests
   hosts: localhost
   tasks:
-    - name: Find all roles
-      ansible.builtin.find:
-        paths:
-          - "{{ (playbook_dir | default('.')) ~ '/roles' }}"
-        file_type: directory
-        depth: 1
-      register: result
-    - name: Include all roles
-      ansible.builtin.include_role:
-        name: "{{ item }}"
-      loop: "{{ result.files | map(attribute='path') | map('regex_replace', '.*/', '') | sort }}"
+    ---\n\n- name: Find all roles\n  ansible.builtin.find:\n    paths:\n      - "{{ (playbook_dir | default('.')) ~ '/roles' }}"\n    file_type: directory\n    depth: 1\n  register: result\n\n- name: Include all roles\n  ansible.builtin.include_role:\n    name: "{{ item['path'] | regex_replace('^.*/', '') }}"\n  loop: "{{ result.files | map(attribute='path') | sort }}"\n\n
+    ---\n\n- name: Include all roles\n  ansible.builtin.include_role:\n    name: "{{ item }}"\n  loop: "{{ result.files | map(attribute='path') | map('regex_replace', '.*/', '') | sort }}"\n\n
