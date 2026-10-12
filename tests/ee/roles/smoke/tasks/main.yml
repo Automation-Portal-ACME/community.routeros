@@ -9,8 +9,8 @@
     password: bar
     hostname: localhost
     path: ip address
-  ignore_errors: true
   register: result
+  ignore_errors: true
 
 - name: Validate result
   ansible.builtin.assert:
@@ -26,6 +26,8 @@
   community.routeros.command:
     commands:
       - /ip address print
+  register: result
+  ignore_errors: true
   vars:
     ansible_host: localhost
     ansible_connection: ansible.netcommon.network_cli
@@ -33,8 +35,6 @@
     ansible_user: foo
     ansible_ssh_pass: bar
     ansible_ssh_port: 12349
-  ignore_errors: true
-  register: result
 
 - name: Validate result
   ansible.builtin.assert:
